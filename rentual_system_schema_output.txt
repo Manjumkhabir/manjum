@@ -1,0 +1,419 @@
+SQL> 
+SQL> DROP TABLE damage CASCADE CONSTRAINTS;
+
+Table DAMAGE dropped.
+
+SQL> 
+SQL> DROP TABLE owner CASCADE CONSTRAINTS;
+
+Table OWNER dropped.
+
+SQL> 
+SQL> DROP TABLE payment CASCADE CONSTRAINTS;
+
+Table PAYMENT dropped.
+
+SQL> 
+SQL> DROP TABLE property CASCADE CONSTRAINTS;
+
+Table PROPERTY dropped.
+
+SQL> 
+SQL> DROP TABLE rent CASCADE CONSTRAINTS;
+
+Table RENT dropped.
+
+SQL> 
+SQL> DROP TABLE tenant CASCADE CONSTRAINTS;
+
+Table TENANT dropped.
+
+SQL> 
+SQL> -- predefined type, no DDL - MDSYS.SDO_GEOMETRY
+SQL> 
+SQL> -- predefined type, no DDL - XMLTYPE
+SQL> 
+SQL> CREATE TABLE damage (
+  2      dam_date  DATE NOT NULL,
+  3      dam_time  NUMBER(4) NOT NULL,
+  4      dam_type  VARCHAR2(50) NOT NULL,
+  5      dam_cost  NUMBER(7, 1) NOT NULL,
+  6      pay_no    NUMBER(7),
+  7      rent_no   NUMBER(7) NOT NULL
+  8  );
+
+Table DAMAGE created.
+
+SQL> 
+SQL> COMMENT ON COLUMN damage.dam_date IS
+  2      'damge date';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN damage.dam_time IS
+  2      'damage time';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN damage.dam_type IS
+  2      'damage type';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN damage.dam_cost IS
+  2      'cost of damage ';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN damage.pay_no IS
+  2      'payment number';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN damage.rent_no IS
+  2      'serrogate key of rent ';
+
+Comment created.
+
+SQL> 
+SQL> CREATE UNIQUE INDEX damage__idx ON
+  2      damage (
+  3          pay_no
+  4      ASC );
+
+INDEX DAMAGE__IDX created.
+
+SQL> 
+SQL> ALTER TABLE damage ADD CONSTRAINT damage_pk PRIMARY KEY ( dam_date );
+
+Table DAMAGE altered.
+
+SQL> 
+SQL> CREATE TABLE owner (
+  2      owner_no    NUMBER(7) NOT NULL,
+  3      owner_name  VARCHAR2(50)
+  4  );
+
+Table OWNER created.
+
+SQL> 
+SQL> COMMENT ON COLUMN owner.owner_no IS
+  2      'owner number';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN owner.owner_name IS
+  2      'owner name ';
+
+Comment created.
+
+SQL> 
+SQL> ALTER TABLE owner ADD CONSTRAINT owner_pk PRIMARY KEY ( owner_no );
+
+Table OWNER altered.
+
+SQL> 
+SQL> CREATE TABLE payment (
+  2      pay_no      NUMBER(7) NOT NULL,
+  3      pay_date    DATE NOT NULL,
+  4      pay_type    VARCHAR2(50) NOT NULL,
+  5      pay_amount  NUMBER(7) NOT NULL,
+  6      dam_date    DATE,
+  7      rent_no     NUMBER(7) NOT NULL
+  8  );
+
+Table PAYMENT created.
+
+SQL> 
+SQL> COMMENT ON COLUMN payment.pay_no IS
+  2      'payment number';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN payment.pay_date IS
+  2      'payment date';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN payment.pay_type IS
+  2      'paymeny type';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN payment.pay_amount IS
+  2      'payment amount ';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN payment.dam_date IS
+  2      'damge date';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN payment.rent_no IS
+  2      'serrogate key of rent ';
+
+Comment created.
+
+SQL> 
+SQL> CREATE UNIQUE INDEX payment__idx ON
+  2      payment (
+  3          dam_date
+  4      ASC );
+
+INDEX PAYMENT__IDX created.
+
+SQL> 
+SQL> ALTER TABLE payment ADD CONSTRAINT payment_pk PRIMARY KEY ( pay_no );
+
+Table PAYMENT altered.
+
+SQL> 
+SQL> CREATE TABLE property (
+  2      prop_no       NUMBER(7) NOT NULL,
+  3      prop_address  VARCHAR2(50) NOT NULL,
+  4      prop_value    NUMBER NOT NULL,
+  5      owner_no      NUMBER(7) NOT NULL
+  6  );
+
+Table PROPERTY created.
+
+SQL> 
+SQL> COMMENT ON COLUMN property.prop_no IS
+  2      'property number';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN property.prop_address IS
+  2      'property address';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN property.prop_value IS
+  2      'property vlaue ';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN property.owner_no IS
+  2      'owner number';
+
+Comment created.
+
+SQL> 
+SQL> ALTER TABLE property ADD CONSTRAINT property_pk PRIMARY KEY ( prop_no );
+
+Table PROPERTY altered.
+
+SQL> 
+SQL> CREATE TABLE rent (
+  2      rent_no               NUMBER(7) NOT NULL,
+  3      prop_no               NUMBER(7) NOT NULL,
+  4      rent_lease_startdate  DATE NOT NULL,
+  5      rent_bond             NUMBER(7) NOT NULL,
+  6      rent_lease_period     VARCHAR2(50) NOT NULL,
+  7      tenant_no             NUMBER(7) NOT NULL
+  8  );
+
+Table RENT created.
+
+SQL> 
+SQL> COMMENT ON COLUMN rent.rent_no IS
+  2      'serrogate key of rent ';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN rent.prop_no IS
+  2      'property number';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN rent.rent_lease_startdate IS
+  2      'rent lease starting date';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN rent.rent_bond IS
+  2      'rent bond';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN rent.rent_lease_period IS
+  2      'rent lease period ';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN rent.tenant_no IS
+  2      'tenant number';
+
+Comment created.
+
+SQL> 
+SQL> ALTER TABLE rent ADD CONSTRAINT rent_pk PRIMARY KEY ( rent_no );
+
+Table RENT altered.
+
+SQL> 
+SQL> ALTER TABLE rent
+  2      ADD CONSTRAINT key_2 UNIQUE ( rent_lease_startdate,
+  3                                    rent_bond,
+  4                                    prop_no,
+  5                                    rent_lease_period,
+  6                                    tenant_no );
+
+Table RENT altered.
+
+SQL> 
+SQL> CREATE TABLE tenant (
+  2      tenant_no       NUMBER(7) NOT NULL,
+  3      tenant_fname    VARCHAR2(50) NOT NULL,
+  4      tenant_gname    VARCHAR2(50) NOT NULL,
+  5      tenant_address  VARCHAR2(50) NOT NULL,
+  6      tenant_phone    NUMBER(10, 7) NOT NULL
+  7  );
+
+Table TENANT created.
+
+SQL> 
+SQL> COMMENT ON COLUMN tenant.tenant_no IS
+  2      'tenant number';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN tenant.tenant_fname IS
+  2      'tenant firstname';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN tenant.tenant_address IS
+  2      'tenant address';
+
+Comment created.
+
+SQL> 
+SQL> COMMENT ON COLUMN tenant.tenant_phone IS
+  2      'tenant phone ';
+
+Comment created.
+
+SQL> 
+SQL> ALTER TABLE tenant ADD CONSTRAINT tenant_pk PRIMARY KEY ( tenant_no );
+
+Table TENANT altered.
+
+SQL> 
+SQL> ALTER TABLE payment
+  2      ADD CONSTRAINT daamge_pay FOREIGN KEY ( dam_date )
+  3          REFERENCES damage ( dam_date );
+
+Table PAYMENT altered.
+
+SQL> 
+SQL> ALTER TABLE damage
+  2      ADD CONSTRAINT daamge_payv1 FOREIGN KEY ( pay_no )
+  3          REFERENCES payment ( pay_no );
+
+Table DAMAGE altered.
+
+SQL> 
+SQL> ALTER TABLE property
+  2      ADD CONSTRAINT owners_property FOREIGN KEY ( owner_no )
+  3          REFERENCES owner ( owner_no );
+
+Table PROPERTY altered.
+
+SQL> 
+SQL> ALTER TABLE rent
+  2      ADD CONSTRAINT property_rents FOREIGN KEY ( prop_no )
+  3          REFERENCES property ( prop_no );
+
+Table RENT altered.
+
+SQL> 
+SQL> ALTER TABLE damage
+  2      ADD CONSTRAINT rent_daamge FOREIGN KEY ( rent_no )
+  3          REFERENCES rent ( rent_no );
+
+Table DAMAGE altered.
+
+SQL> 
+SQL> ALTER TABLE payment
+  2      ADD CONSTRAINT rent_payment FOREIGN KEY ( rent_no )
+  3          REFERENCES rent ( rent_no );
+
+Table PAYMENT altered.
+
+SQL> 
+SQL> ALTER TABLE rent
+  2      ADD CONSTRAINT tent_prop FOREIGN KEY ( tenant_no )
+  3          REFERENCES tenant ( tenant_no );
+
+Table RENT altered.
+
+SQL> 
+SQL> 
+SQL> 
+SQL> -- Oracle SQL Developer Data Modeler Summary Report: 
+SQL> -- 
+SQL> -- CREATE TABLE                             6
+SQL> -- CREATE INDEX                             2
+SQL> -- ALTER TABLE                             14
+SQL> -- CREATE VIEW                              0
+SQL> -- ALTER VIEW                               0
+SQL> -- CREATE PACKAGE                           0
+SQL> -- CREATE PACKAGE BODY                      0
+SQL> -- CREATE PROCEDURE                         0
+SQL> -- CREATE FUNCTION                          0
+SQL> -- CREATE TRIGGER                           0
+SQL> -- ALTER TRIGGER                            0
+SQL> -- CREATE COLLECTION TYPE                   0
+SQL> -- CREATE STRUCTURED TYPE                   0
+SQL> -- CREATE STRUCTURED TYPE BODY              0
+SQL> -- CREATE CLUSTER                           0
+SQL> -- CREATE CONTEXT                           0
+SQL> -- CREATE DATABASE                          0
+SQL> -- CREATE DIMENSION                         0
+SQL> -- CREATE DIRECTORY                         0
+SQL> -- CREATE DISK GROUP                        0
+SQL> -- CREATE ROLE                              0
+SQL> -- CREATE ROLLBACK SEGMENT                  0
+SQL> -- CREATE SEQUENCE                          0
+SQL> -- CREATE MATERIALIZED VIEW                 0
+SQL> -- CREATE MATERIALIZED VIEW LOG             0
+SQL> -- CREATE SYNONYM                           0
+SQL> -- CREATE TABLESPACE                        0
+SQL> -- CREATE USER                              0
+SQL> -- 
+SQL> -- DROP TABLESPACE                          0
+SQL> -- DROP DATABASE                            0
+SQL> -- 
+SQL> -- REDACTION POLICY                         0
+SQL> -- TSDP POLICY                              0
+SQL> -- 
+SQL> -- ORDS DROP SCHEMA                         0
+SQL> -- ORDS ENABLE SCHEMA                       0
+SQL> -- ORDS ENABLE OBJECT                       0
+SQL> -- 
+SQL> -- ERRORS                                   0
+SQL> -- WARNINGS                                 0
+SQL> SPOOL OFF
